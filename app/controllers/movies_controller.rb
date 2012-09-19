@@ -11,21 +11,35 @@ class MoviesController < ApplicationController
       @movies = Movie.all
     end
     if params[:ratings]
-      logger.info "#{params[:ratings].inspect}"
       @ratings = params[:ratings]
       @movies = Movie.filter_by_ratings(@ratings)
+    elsif session[:ratings]
+      if session[:sort]
+        redirect_to movies_path(:ratings => session[:ratings], :sort => session[:sort]) and return
+      else
+        redirect_to movies_path(:ratings => session[:ratings]) and return
+      end
     else
+      @movies = []
       @ratings = {}
     end
-    sort = params[:sort]
-    if sort  == 'title'
-      @movies = @movies.sort {|a,b| a.title.downcase <=> b.title.downcase}
-      @sort = 'title'
-    elsif sort == 'release'
-      @movies = @movies.sort {|a,b| a.release_date <=> b.release_date}
-      @sort = sort
+    if params[:sort]
+      if params[:sort]  == 'title'
+        @movies = @movies.sort {|a,b| a.title.downcase <=> b.title.downcase}
+        @sort = 'title'
+      elsif params[:sort] == 'release'
+        @movies = @movies.sort {|a,b| a.release_date <=> b.release_date}
+        @sort = 'release'
+      end
+    elsif session[:sort]
+      redirect_to movies_path(:sort => session[:sort]) and return
     end
     @all_ratings = Movie.all_ratings
+    session[:ratings] = @ratings
+    logger.info "ratings: #{session[:ratings].inspect}"
+    session[:sort] = @sort
+    logger.info "sort: #{session[:sort].inspect}"
+    logger.info "session: #{session.inspect}"
   end
 
   def new
