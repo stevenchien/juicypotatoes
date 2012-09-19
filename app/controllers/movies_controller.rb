@@ -36,10 +36,7 @@ class MoviesController < ApplicationController
     end
     @all_ratings = Movie.all_ratings
     session[:ratings] = @ratings
-    logger.info "ratings: #{session[:ratings].inspect}"
     session[:sort] = @sort
-    logger.info "sort: #{session[:sort].inspect}"
-    logger.info "session: #{session.inspect}"
   end
 
   def new
