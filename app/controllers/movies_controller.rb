@@ -20,8 +20,7 @@ class MoviesController < ApplicationController
         redirect_to movies_path(:ratings => session[:ratings]) and return
       end
     else
-      @movies = []
-      @ratings = {}
+      @ratings = Movie.all_ratings
     end
     if params[:sort]
       if params[:sort]  == 'title'
